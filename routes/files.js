@@ -45,15 +45,15 @@ router.post('/send', async (req, res) => {
     file.receiver = emailTo;
     const response = await file.save();
     // send mail
-    const sendMail = require('../services/mailService');
+    const sendMail = require('../services/emailService');
     sendMail({
       from: emailFrom,
       to: emailTo,
-      subject: 'inShare file sharing',
+      subject: 'file-sharing',
       text: `${emailFrom} shared a file with you.`,
       html: require('../services/emailTemplate')({
                 emailFrom, 
-                downloadLink: `${process.env.APP_BASE_URL}/files/${file.uuid}?source=email` ,
+                downloadLink: `${process.env.APP_BASE_URL}/files/${file.uuid}` ,
                 size: parseInt(file.size/1000) + ' KB',
                 expires: '24 hours'
             })
@@ -63,7 +63,8 @@ router.post('/send', async (req, res) => {
       return res.status(500).json({error: 'Error in email sending.'});
     });
 } catch(err) {
-  return res.status(500).send({ error: 'Something went wrong.'});
+     
+   return res.status(500).send({ error: 'Something went wrong.'});
 }
 
 });
